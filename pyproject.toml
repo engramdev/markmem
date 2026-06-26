@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "markmem"
+version = "0.1.0"
+description = "Selbst-lernendes, selbst-tunendes KI-Gedächtnis auf Markdown+git — HybridRAG, Lern-Schleife, responsives Terminal-Dashboard (memDash)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["memory", "rag", "retrieval", "embeddings", "ollama", "markdown", "agent-memory", "tui", "dashboard"]
+authors = [{ name = "markmem contributors" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Environment :: Console",
+]
+dependencies = []  # Kern = pure stdlib
+
+[project.optional-dependencies]
+vektor = ["numpy>=1.24", "wcwidth>=0.2"]
+rerank = ["torch>=2.0", "transformers>=4.30"]
+dev = ["pytest>=7", "ruff>=0.4"]
+all = ["markmem[vektor,rerank]"]
+
+[project.urls]
+Homepage = "https://github.com/markmem/markmem"
+Documentation = "https://github.com/markmem/markmem/tree/main/docs"
+
+[project.scripts]
+memdash = "markmem.core.dashboard:main"
+markmem-index = "markmem.core.embed_memories:main"
+markmem-retrieve = "markmem.core.memory_retrieve:main"
+markmem-compact = "markmem.core.memory_compact:main"
+markmem-tier = "markmem.core.memory_tier:main"
+markmem-eval = "markmem.eval.eval_retrieval:main"
+markmem-tune = "markmem.eval.tune_retrieval:main"
+markmem-deadends = "markmem.learn.deadend_catalog:main"
+markmem-graph = "markmem.learn.graph_densify:main"
+markmem-audit = "markmem.ops.memory_audit:main"
+markmem-status = "markmem.ops.memory_status:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/markmem"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/markmem", "examples", "eval", "docs", "integrations", "scripts", "README.md", "LICENSE"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["rerank: braucht torch/transformers (skip ohne)", "ollama: braucht laufenden Ollama"]

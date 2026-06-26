@@ -1,0 +1,34 @@
+# ─── Python ───
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# ─── OS ───
+.DS_Store
+
+# ─── Build-Artefakte des Gedächtnisses (nie einchecken) ───
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.bak.*
+*.bak-*
+
+# Metrics sind generierte Daten, kein Quellcode
+examples/memory/metrics/*
+!examples/memory/metrics/.gitkeep
+metrics/
+*.jsonl
+retrieval_config.json
+
+# ─── Privacy: echte Memory-Datenbanken NIE einchecken ───
+# Nur synthetische *.sample.md + die Demo-Index-Dateien gehören ins Repo.
+# Reale Notizen liegen außerhalb (per MARKMEM_MEMORY_DIR) und bleiben privat.
+/memory/
+/data/
+*.private.md
