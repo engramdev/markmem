@@ -177,6 +177,7 @@ def main() -> int:
         print(f"  • {m['card']}  (off {m['rank_off']} → on #{m['rank_on']})")
         print(f"    q: \"{m['query']}\"")
 
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"mode": args.mode, "n": len(ranks_on),
                                "vector_on": s_on, "vector_off": s_off,
                                "vector_rerank": s_rr,

@@ -132,9 +132,10 @@ def main() -> int:
             out.append(f"- **Lehre:** {e['lehre']}")
         out.append(f"- Quelle: `{e['src']}`")
         out.append("")
+    blob = "\n".join(out)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text("\n".join(out), encoding="utf-8")
-    print(f"[done] {len(entries)} Dead-Ends → {OUT} ({len('\n'.join(out).encode())//1024}KB)")
+    OUT.write_text(blob, encoding="utf-8")
+    print(f"[done] {len(entries)} Dead-Ends → {OUT} ({len(blob.encode()) // 1024}KB)")
     print("  Entities:", ", ".join(e["entity"] for e in entries))
     return 0
 

@@ -7,7 +7,7 @@ name = "markmem"
 version = "0.1.0"
 description = "Selbst-lernendes, selbst-tunendes KI-Gedächtnis auf Markdown+git — HybridRAG, Lern-Schleife, responsives Terminal-Dashboard (memDash)."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 keywords = ["memory", "rag", "retrieval", "embeddings", "ollama", "markdown", "agent-memory", "tui", "dashboard"]
 authors = [{ name = "markmem contributors" }]
@@ -51,7 +51,7 @@ include = ["src/markmem", "examples", "eval", "docs", "integrations", "scripts",
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
+target-version = "py311"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-5FD787?style=flat-square" alt="License: MIT">
-  <img src="https://img.shields.io/badge/Python-3.10%2B-5AC8F5?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/Python-3.11%2B-5AC8F5?style=flat-square&logo=python&logoColor=white" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/Tests-31_passing-5FD787?style=flat-square" alt="Tests: 31 passing">
   <img src="https://img.shields.io/badge/Built_with-Ollama_%2B_bge--m3-7DAAF5?style=flat-square" alt="Built with Ollama + bge-m3">
   <img src="https://img.shields.io/badge/Code_style-fail--open-8A93A0?style=flat-square" alt="Code style: fail-open">

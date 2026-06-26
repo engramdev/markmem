@@ -23,14 +23,14 @@ bash examples/quickstart.sh
 pytest                    # Kern-Tests
 pytest -m "not rerank"    # ohne torch/transformers
 pytest -m "not ollama"    # ohne laufenden Ollama
-ruff check .              # Linting (line-length 120, target py310)
+ruff check .              # Linting (line-length 120, target py311)
 ```
 
 Tests, die externe Dienste brauchen, sind markiert (`rerank`, `ollama`) und werden ohne diese sauber übersprungen.
 
 ## Stil
 
-- **Code:** Python 3.10+, pure stdlib im Kern; schwere Abhängigkeiten (numpy, torch, transformers) nur hinter optionalen Extras und **fail-open** importieren — fehlt das Extra, degradiert die Funktion, statt abzustürzen.
+- **Code:** Python 3.11+, pure stdlib im Kern; schwere Abhängigkeiten (numpy, torch, transformers) nur hinter optionalen Extras und **fail-open** importieren — fehlt das Extra, degradiert die Funktion, statt abzustürzen.
 - **Kommentare & Doku-Strings auf Deutsch**, knapp und sachlich.
 - **Namen ≥ 4 Zeichen**, sprechend (keine `x`, `tmp`, `d` als tragende Variablen).
 - **fail-open beim Abruf, fail-closed bei riskanten Schreib-Aktionen.** Ein Synapsen-Fehler darf nie die Session blockieren.
