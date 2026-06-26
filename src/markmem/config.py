@@ -8,7 +8,7 @@ setzt man `MARKMEM_MEMORY_DIR` (und optional ein Profil) per Umgebungsvariable.
 
 Profile (TOML unter examples/profiles/, gewählt via MARKMEM_PROFILE):
   - generic   (Default): domänenneutral
-  - bugbounty (Beispiel): reproduziert die ursprüngliche Security-Research-Semantik
+  - ein Beispiel-Profil (examples/profiles/) zeigt domänenspezifisches Override
 
 Fail-open: fehlt etwas, greift der Default — nie ein harter Abbruch wegen Config.
 """

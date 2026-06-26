@@ -1,0 +1,25 @@
+# markmem-Profil: generic (domänenneutral)
+#
+# Default-Semantik. Auflösung je Wert: Env-Variable > dieses Profil > eingebauter
+# Default in config.py. Dieses Profil setzt bewusst neutrale, domänenfreie Werte,
+# damit das Paket out-of-the-box auf dem examples/-Korpus läuft.
+
+[deadend]
+# Verzeichnis mit Negativ-Wissen (Dead-End-Writeups). Leer/auskommentiert =>
+# config.py-Default (examples/deadend_sources/nieten).
+# dir = ""
+glob = "*/DEADEND.md"
+registry_name = "reference_deadends_registry.md"
+
+[entity]
+# Quelle der Graph-Entitäten für die Verdichtung: 'dir' | 'file' | 'list'
+source = "dir"
+# dir = ""        # leer => examples/memory (config.py-Default)
+file = ""
+list = []
+# Generische Stoppwörter, die nicht als Entity-Namensteil zählen
+generic = ["test", "demo", "example", "sample", "temp", "todo", "misc", "data"]
+
+[context]
+# cwd -> Kontext-Tag (Liste von [regex, tag]) für die Hook-Integration.
+patterns = [["/projects/([a-z0-9_-]+)", "project"]]

@@ -26,6 +26,10 @@ metrics/
 *.jsonl
 retrieval_config.json
 
+# Generierte Register (von markmem-deadends erzeugt, kein Quellcode)
+examples/memory/reference_deadends_registry.md
+examples/memory/reference_sackgassen_registry.md
+
 # ─── Privacy: echte Memory-Datenbanken NIE einchecken ───
 # Nur synthetische *.sample.md + die Demo-Index-Dateien gehören ins Repo.
 # Reale Notizen liegen außerhalb (per MARKMEM_MEMORY_DIR) und bleiben privat.

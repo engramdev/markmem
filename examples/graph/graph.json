@@ -1,0 +1,27 @@
+{"type":"entity","name":"widget-api","entityType":"service","observations":["Zentraler Dienst zum Anlegen, Lesen und Aktualisieren von Widgets","Sitzt hinter dem Rate-Limit-Gateway und nutzt den gemeinsamen Cache"]}
+{"type":"entity","name":"deploy-pipeline","entityType":"system","observations":["Vier Stufen: Build, Test, Staging, Produktion","Jede Stufe ist ein Gate"]}
+{"type":"entity","name":"caching","entityType":"concept","observations":["Schreibpfad invalidiert den Cache-Key","Stale-Einträge sind die häufigste Fehlerquelle"]}
+{"type":"entity","name":"pagination","entityType":"concept","observations":["Cursor-basiert statt Offset","Cursor ist kurzlebig und wird nicht gecacht"]}
+{"type":"entity","name":"webhook","entityType":"feature","observations":["Ausgehende Zustellung mit HMAC-Signatur","Dead-Letter-Queue nach erschöpften Versuchen"]}
+{"type":"entity","name":"rate-limit","entityType":"policy","observations":["Token-Bucket pro Client","429 mit Retry-After-Header bei Überschreitung"]}
+{"type":"entity","name":"versioning","entityType":"concept","observations":["SemVer MAJOR.MINOR.PATCH","Migrationen müssen additiv sein"]}
+{"type":"entity","name":"config-schema","entityType":"concept","observations":["Auflösung Env vor Profil vor Default","Fail-open auf den Default"]}
+{"type":"entity","name":"logging","entityType":"concept","observations":["Strukturierte JSON-Logs mit Korrelations-ID","Niemals Secrets oder PII loggen"]}
+{"type":"entity","name":"retry","entityType":"concept","observations":["Exponentielles Backoff plus Jitter","Limit der Versuche, dann sauber aufgeben"]}
+{"type":"entity","name":"metrics","entityType":"concept","observations":["RED-Methode: Rate, Errors, Duration","Ergänzt die strukturierten Logs"]}
+{"type":"entity","name":"cli-design","entityType":"concept","observations":["Default ist Dry-Run, --apply für Änderungen","Exit 0 ok, 1 Fehler; --json für Maschinen"]}
+{"type":"entity","name":"secrets","entityType":"concept","observations":["Nur im Secret-Store, nie in Code/Log/Cache","Beim Embedding redigieren"]}
+{"type":"entity","name":"testing","entityType":"concept","observations":["Viele schnelle Unit-Tests als Basis","Schmale Schicht gezielter End-to-End-Tests"]}
+{"type":"entity","name":"onboarding","entityType":"process","observations":["Setup, Konventionen, erste Schritte","Kleine rückbaubare Änderungen bevorzugen"]}
+{"type":"relation","from":"widget-api","to":"caching","relationType":"verwendet"}
+{"type":"relation","from":"widget-api","to":"pagination","relationType":"verwendet"}
+{"type":"relation","from":"widget-api","to":"rate-limit","relationType":"sitzt-hinter"}
+{"type":"relation","from":"widget-api","to":"webhook","relationType":"stoesst-an"}
+{"type":"relation","from":"deploy-pipeline","to":"widget-api","relationType":"rollt-aus"}
+{"type":"relation","from":"deploy-pipeline","to":"versioning","relationType":"prueft"}
+{"type":"relation","from":"deploy-pipeline","to":"testing","relationType":"erzwingt"}
+{"type":"relation","from":"retry","to":"rate-limit","relationType":"respektiert"}
+{"type":"relation","from":"logging","to":"metrics","relationType":"ergaenzt"}
+{"type":"relation","from":"config-schema","to":"rate-limit","relationType":"konfiguriert"}
+{"type":"relation","from":"webhook","to":"secrets","relationType":"nutzt"}
+{"type":"relation","from":"onboarding","to":"cli-design","relationType":"lehrt"}

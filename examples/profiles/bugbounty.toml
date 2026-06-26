@@ -1,0 +1,24 @@
+# markmem-Profil: bugbounty (Beispiel — reproduziert die alte Security-Semantik)
+#
+# Zeigt, wie ein domänenspezifisches Profil die Defaults überschreibt, OHNE reale
+# Namen zu enthalten. Auflösung je Wert: Env-Variable > dieses Profil > Default.
+#
+# Aktivieren: MARKMEM_PROFILE=bugbounty
+
+[deadend]
+# In der Ursprungs-Domäne hießen Dead-End-Writeups "NIETE.md" unter targets/nieten/<ziel>/.
+# dir bleibt auf dem examples-Default (siehe config.py); hier nur Glob + Registry-Name,
+# damit die Verifikation ohne reale Pfade durchläuft.
+glob = "*/NIETE.md"
+registry_name = "reference_sackgassen_registry.md"
+
+[entity]
+# Entitäten aus dem Memory-Verzeichnis ableiten (wie gehabt).
+source = "dir"
+file = ""
+list = []
+generic = ["test", "demo", "example", "sample", "temp", "todo", "misc", "data", "target", "ziel"]
+
+[context]
+# cwd /targets/<name> -> Tag "target" (alte Semantik, ohne realen Zielnamen).
+patterns = [["/targets/([a-z0-9_-]+)", "target"]]

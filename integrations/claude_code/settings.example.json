@@ -1,0 +1,31 @@
+{
+  "env": {
+    "MARKMEM_MEMORY_DIR": "/absolute/path/to/your/memory",
+    "MARKMEM_PROFILE": "generic",
+    "PYTHONPATH": "/absolute/path/to/markmem/src"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /absolute/path/to/markmem/integrations/claude_code/session_start_banner.py"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /absolute/path/to/markmem/integrations/claude_code/correction_synapse.py --capture"
+          }
+        ]
+      }
+    ]
+  }
+}

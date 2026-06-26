@@ -1,0 +1,21 @@
+name: privacy-gate
+
+# Eigenständiges Gate: blockiert, sobald identitätsnahe/umgebungsspezifische Spuren
+# in getrackten Dateien auftauchen (siehe scripts/privacy_check.sh). Läuft schnell,
+# braucht nur bash + git, keine Python-Abhängigkeiten.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  privacy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # vollständige Datei-Liste für git ls-files
+
+      - name: Privacy-/Identitäts-Scan
+        run: bash scripts/privacy_check.sh
