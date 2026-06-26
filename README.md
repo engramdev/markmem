@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/banner.svg" alt="markmem" width="700"></p>
+<p align="center"><img src="assets/banner.svg" alt="markmem" width="600"></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-5FD787?style=flat-square" alt="License: MIT">
@@ -14,13 +14,15 @@
   <em>Ein selbst-lernendes, selbst-tunendes KI-Gedächtnis auf Markdown + git — HybridRAG-Abruf, eine echte Lern-Schleife und ein responsives Terminal-Dashboard. Jede Behauptung ist eine gemessene Zahl, kein Versprechen.</em>
 </p>
 
-`markmem` macht aus einem gewachsenen Markdown-Notizsystem ein Gedächtnis, das **semantisch abruft**, **aus Korrekturen lernt**, **sich selbst verdichtet** und **seine eigenen Such-Gewichte gegen eine gemessene Recall-Metrik tunt** — ohne Daemon, ohne schwere Datenbank, ohne Vendor-Lock-in.
+**Kurz gesagt:** Deine Markdown-Notizen werden zu einem Gedächtnis, das beim Suchen *versteht, was du meinst* (nicht nur Stichwörter trifft), aus deinen Korrekturen dazulernt und sich selbst aufgeräumt und treffsicher hält.
+
+Technisch heißt das: `markmem` ergänzt ein gewachsenes Markdown-Notizsystem um **semantischen Abruf**, eine **Lern-Schleife**, **automatische Verdichtung** und **selbst-getunte Such-Gewichte** (gemessen an einer echten Treffer-Quote) — ohne Hintergrunddienst, ohne schwere Datenbank, ohne Anbieter-Bindung.
 
 <hr>
 
 ## memDash — auf einen Blick
 
-`memdash` ist das visuelle Aushängeschild: ein farbiges Terminal-Dashboard, das den kompletten Live-Zustand des Gedächtnisses zeigt — und sich wie eine CSS-Media-Query an die Fensterbreite anpasst. **Auch für Nicht-Techniker lesbar:** Oben steht eine Klartext-Zusammenfassung in Alltagssprache (z. B. *„Dein Gedächtnis: 21 Notizen gespeichert, zuletzt 4 neue Erkenntnisse gemerkt, findet Gesuchtes in 9 von 10 Fällen auf Anhieb."*), jedes Panel hat einen Untertitel, der erklärt wofür es da ist, und Fachbegriffe (Recall@1, Graph, Sackgassen, Chunks …) sind direkt an der Zahl kurz erklärt.
+`memdash` ist die sichtbare Seite von markmem: ein farbiges Terminal-Dashboard, das den kompletten Live-Zustand des Gedächtnisses zeigt — und sich wie eine CSS-Media-Query an die Fensterbreite anpasst. **Man muss kein Fachwissen mitbringen:** Oben steht eine Zusammenfassung in normaler Alltagssprache (z. B. *„Dein Gedächtnis: 21 Notizen gespeichert, zuletzt 4 neue Erkenntnisse gemerkt, findet Gesuchtes in 9 von 10 Fällen auf Anhieb."*), jedes Panel hat einen Untertitel, der in einem Satz erklärt, wofür es da ist, und jeder Fachbegriff (Recall@1, Graph, Sackgassen, Chunks …) ist direkt an der Zahl kurz erklärt.
 
 Ein und dasselbe Dashboard, zwei Fensterbreiten — links der Breit-Modus am Mac, rechts derselbe Stand im iPhone-Hochformat:
 
@@ -242,13 +244,13 @@ memdash            # Snapshot
 memdash --watch    # Live, refresht alle 5 s + sofort bei Resize
 ```
 
-Vier Eigenschaften machen es zum Aushängeschild:
+Vier Eigenschaften machen es besonders:
 
-- **Selbst-erklärend (auch für Laien).** Eine Klartext-Zusammenfassung in Alltagssprache ganz oben, ein Untertitel pro Panel (»wofür ist das?«) und kurze Erklärungen direkt an jedem Fachbegriff — man muss kein Wort wie *Recall@1* oder *Sackgasse* kennen, um zu verstehen, was das Dashboard sagt. Die Erklärungen kürzen sich in schmalen Fenstern automatisch.
+- **Selbst-erklärend.** Ganz oben eine Zusammenfassung in normaler Alltagssprache, ein Untertitel pro Panel (»wofür ist das?«) und kurze Erklärungen direkt an jedem Fachbegriff — man muss kein Wort wie *Recall@1* oder *Sackgasse* kennen, um zu verstehen, was das Dashboard sagt. In schmalen Fenstern kürzen sich die Erklärungen automatisch.
 
 - **Responsiv wie CSS-Media-Queries.** Es misst die Terminalbreite bei jedem Tick und reagiert auf `SIGWINCH`. Drei Modi: **schmal** (< 56 Spalten, z. B. iPhone-Hochformat über SSH) ohne Boxen, **mittel** (56–99) kompakt, **breit** (≥ 100) mit vollen Rahmen. Keine Zeile wird je breiter als das Fenster (30–120 Spalten getestet).
-- **Unicode-korrekt.** Textbreiten werden über `wcwidth` gerechnet — Emojis und Block-Elemente belegen zwei Zellen, die Spalten fluchten überall.
-- **Farb-Degradation.** Truecolor → 256 → 16 → S/W, je nach Terminal. Information trägt über **Farbe & Form** (füllende Balken, Sparkline, Chips: DROP rot / MERGE orange / ADD grün), nicht über Emojis.
+- **Unicode-korrekt.** Textbreiten werden über `wcwidth` berechnet — auch doppelt-breite Zeichen wie Block-Elemente belegen zwei Zellen, sodass die Spalten überall sauber fluchten.
+- **Farb-Degradation.** Truecolor → 256 → 16 → S/W, je nach Terminal. Information trägt über **Farbe & Form** — füllende Balken, Sparkline und farbige Chips (DROP rot / MERGE orange / ADD grün).
 
 ```bash
 # Overrides zum Testen (z. B. den schmalen Modus erzwingen)

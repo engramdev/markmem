@@ -1,19 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 180" width="820" height="180" role="img" aria-label="markmem — self-learning memory">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 618 180" width="618" height="180" role="img" aria-label="markmem — self-learning memory">
   <defs>
     <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="rgb(120,215,250)"/>
       <stop offset="1" stop-color="rgb(70,180,230)"/>
     </linearGradient>
   </defs>
-  <rect x="0" y="0" width="820" height="180" rx="16" ry="16" fill="rgb(18,22,28)"/>
-  <rect x="0.75" y="0.75" width="818.5" height="178.5" rx="15.25" ry="15.25" fill="none" stroke="rgb(70,120,145)" stroke-opacity="0.35" stroke-width="1.5"/>
+  <rect x="0" y="0" width="618" height="180" rx="16" ry="16" fill="rgb(18,22,28)"/>
+  <rect x="0.75" y="0.75" width="616.5" height="178.5" rx="15.25" ry="15.25" fill="none" stroke="rgb(70,120,145)" stroke-opacity="0.35" stroke-width="1.5"/>
 
-  <!-- ASCII-Block-Wortmarke "markmem" (█▀▄), cyan, terminal-logo-Stil -->
+  <!-- ASCII-Block-Wortmarke "markmem" (47 Zeichen breit), cyan, Terminal-Logo-Stil. Inhalt x=56..562, symmetrischer Rand 56 -->
   <text font-family="ui-monospace,'JetBrains Mono','DejaVu Sans Mono',monospace" font-size="18" font-weight="700" fill="url(#cyan)" xml:space="preserve"><tspan x="56" y="48">█   █   ███   ████   █   █  █   █  █████  █   █</tspan><tspan x="56" y="68">██ ██  █   █  █   █  █  █   ██ ██  █      ██ ██</tspan><tspan x="56" y="88">█ █ █  █████  ████   ███    █ █ █  ███    █ █ █</tspan><tspan x="56" y="108">█   █  █   █  █  █   █  █   █   █  █      █   █</tspan><tspan x="56" y="128">█   █  █   █  █   █  █   █  █   █  █████  █   █</tspan></text>
 
-  <!-- dezenter Untertitel in GEDAEMPFT -->
-  <text x="58" y="156" font-family="ui-monospace,'JetBrains Mono','DejaVu Sans Mono',monospace" font-size="15" letter-spacing="1.2" fill="rgb(135,145,160)">self-learning memory · HybridRAG · memDash</text>
+  <!-- dezenter Untertitel, links bündig mit der Wortmarke -->
+  <text x="56" y="156" font-family="ui-monospace,'JetBrains Mono','DejaVu Sans Mono',monospace" font-size="15" letter-spacing="1.2" fill="rgb(135,145,160)">self-learning memory · HybridRAG · memDash</text>
 
-  <!-- dünner cyan Akzent-Strich darunter -->
-  <rect x="58" y="166" width="704" height="2.5" rx="1.25" fill="url(#cyan)" opacity="0.85"/>
+  <!-- dünner cyan Akzent-Strich, exakt auf Wortmarken-Breite (x=56, width=506) -->
+  <rect x="56" y="166" width="506" height="2.5" rx="1.25" fill="url(#cyan)" opacity="0.85"/>
 </svg>
