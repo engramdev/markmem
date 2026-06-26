@@ -259,6 +259,28 @@ def rechts_buendig(wert: str, breite: int) -> str:
     return " " * pad + wert
 
 
+def laie(breit: str, mittel: str = None, schmal: str = None) -> str:
+    """Klartext-Caption je nach Modus wählen (breit = voll, schmal = kürzest).
+
+    Reine Darstellung: keine Daten/Logik — nur Erklärungstext in Alltagssprache.
+    Fällt mangels eigener Kurzform sauber auf die nächst-längere zurück.
+    """
+    if MODUS == "schmal":
+        return schmal if schmal is not None else (mittel if mittel is not None else breit)
+    if MODUS == "mittel":
+        return mittel if mittel is not None else breit
+    return breit
+
+
+def caption(breit: str, mittel: str = None, schmal: str = None) -> str:
+    """Eine gedämpfte Klartext-Zeile (Untertitel/Erklärung) für ein Panel.
+
+    Wird als normale Inhalts-Zeile gerendert → abschnitt() beschneidet sie
+    automatisch auf die zulässige Breite (nie breiter als COLUMNS).
+    """
+    return c(laie(breit, mittel, schmal), "GEDAEMPFT")
+
+
 # ═══════════════════════════ Zeilen-Bausteine (einheitliches Raster) ═══════════════════════════
 def metrik(label: str, frac: float, wert: str, name: str = None) -> str:
     """label (LABELB) · Balken (BARW, füllt) · Wert (WERTB, rechtsbündig). Überall gleich."""
@@ -436,21 +458,43 @@ def render():
                                          capture_output=True, text=True).stdout.strip(), "?")
     print(beschneiden(c("memDash", "AKZENT", bold=True) + c("  —  Live-Zustand des KI-Gedächtnisses", "GEDAEMPFT"), BREITE))
     print(beschneiden(c(f"branch {branch} · {MODUS} · {BREITE}×{HOEHE} · {FARBSTUFE} · {datetime.now():%H:%M}", "GEDAEMPFT"), BREITE))
+
+    # ── Klartext-Zusammenfassung (1 Satz, Alltagssprache, dynamisch) ──
+    n_karten = len(alle)
+    n_neu = inbox_zaehlen("surprises.md") + inbox_zaehlen("corrections.md")
+    r1_now = round((cfg.get("_tuned", {}) or {}).get("recall@1", 0.857) * 100)
+    von10 = max(0, min(10, round(r1_now / 10)))
+    teile_neu = (f"zuletzt {n_neu} neue Erkenntnis{'se' if n_neu != 1 else ''} gemerkt, "
+                 if n_neu else "")
+    fazit_breit = (f"Dein Gedächtnis: {n_karten} Notizen gespeichert, {teile_neu}"
+                   f"findet Gesuchtes in {von10} von 10 Fällen auf Anhieb.")
+    fazit_mittel = f"{n_karten} Notizen · {n_neu} neu gemerkt · Treffer {von10}/10 auf Anhieb."
+    fazit_schmal = f"{n_karten} Notizen · Treffer {von10}/10"
+    print(beschneiden(c(laie(fazit_breit, fazit_mittel, fazit_schmal), "TEXT"), BREITE))
+
     legende = (c("Balken", "TEXT") + c(" = Anteil/Level   ", "GEDAEMPFT")
                + c("grün", "ERFOLG") + c(" gut · ", "GEDAEMPFT")
                + c("gelb", "WARNUNG") + c(" mittel · ", "GEDAEMPFT")
                + c("rot", "GEFAHR") + c(" niedrig", "GEDAEMPFT"))
     print(beschneiden(legende, BREITE))
+    hinweis = laie("Begriffe sind direkt an den Zahlen kurz erklärt.",
+                   "Begriffe an den Zahlen erklärt.", "")
+    if hinweis:
+        print(beschneiden(c(hinweis, "GEDAEMPFT"), BREITE))
     print()
 
     # ── Transformation ──
     mm = safe(lambda: paths.INDEX_FILE.stat().st_size / 1024, 0)
     tcfg = cfg.get("_tuned", {}) or {}
     abschnitt("TRANSFORMATION", [
+        caption("Was sich seit dem Umbau verbessert hat (vorher rechts vom Pfeil ist neu).",
+                "Was der Umbau verbessert hat.", "Vorher → nachher."),
         vergleich("MEMORY.md", 71, round(mm, 1), "KB", "runter"),
         vergleich("Recall@1", round(tcfg.get("baseline_recall@1", 0.80) * 100), round(tcfg.get("recall@1", 0.857) * 100), "%", "hoch"),
         vergleich("Graph", 14, ents, "", "hoch"),
         vergleich("Chunks", 0, (vi or {}).get("chunks", 0), "", "hoch"),
+        caption("Recall@1 = Trefferquote (1. Treffer stimmt) · Graph = Verknüpfungen · Chunks = Textstücke",
+                "Recall@1=Trefferquote · Chunks=Textstücke"),
     ], hint="vorher → nachher")
 
     # ── Korpus ──
@@ -462,11 +506,14 @@ def render():
         zeilen.append(metrik(t, n / total, f"{n}  {n/total*100:>2.0f}%", typfarbe.get(t, "GEDAEMPFT")))
     kb = sum(x[2] for x in alle) / 1024
     zeilen.append(c(f"Summe {total} Karten · {kb:.0f} KB", "GEDAEMPFT"))
+    zeilen.insert(0, caption("Wie viel Wissen gespeichert ist und welcher Art (Karte = eine Notiz).",
+                             "Wie viel Wissen gespeichert ist.", "Gespeichertes Wissen."))
     abschnitt("KORPUS", zeilen, hint="Karten nach Typ")
 
     # ── Tiers ──
     LIMIT = 24.4
-    zeilen = []
+    zeilen = [caption("Welches Wissen sofort geladen wird und welches erst bei Bedarf.",
+                      "Was sofort geladen wird, was bei Bedarf.", "Lade-Ebenen.")]
     for fn, lab in [("MEMORY.md", "Hot"), ("MEMORY_RULES.md", "Hook/Regeln"), ("MEMORY_DEEP.md", "Warm")]:
         sz = safe(lambda fn=fn: (MEM / fn).stat().st_size / 1024, 0)
         if fn == "MEMORY.md":
@@ -474,10 +521,13 @@ def render():
             zeilen.append(metrik(lab, sz / LIMIT, f"{sz:.0f}/{LIMIT:.0f}KB {'voll' if ok else 'ÜBER'}", "ERFOLG" if ok else "GEFAHR"))
         else:
             zeilen.append(metrik(lab, min(sz / 60, 1), f"{sz:.0f} KB", "INFO" if "RULES" in fn else "GEDAEMPFT"))
+    zeilen.append(caption("Hot = immer dabei · Warm = erst bei Bedarf · Limit 24 KB hält Hot schlank.",
+                          "Hot = immer dabei · Warm = bei Bedarf."))
     abschnitt("TIERS", zeilen, hint="Lade-Ebenen · Limit 24 KB")
 
     # ── Qualität ──
-    zeilen = []
+    zeilen = [caption("Wie zuverlässig das System das Richtige wiederfindet.",
+                      "Wie zuverlässig es das Richtige findet.", "Wie oft es richtig findet.")]
     if ev:
         for key, lab, name in [("vector_off", "Baseline", "GEDAEMPFT"),
                                ("vector_on", "+ Vektor", "ERFOLG"),
@@ -486,7 +536,9 @@ def render():
             r1 = d.get("recall@1")
             if r1 is not None:
                 zeilen.append(metrik(lab, r1, f"{r1*100:>4.1f}%", name))
-        zeilen.append(c(f"Gold-Set n={ev.get('n','?')} · Trefferquote Recall@1", "GEDAEMPFT"))
+        zeilen.append(c(laie(
+            f"Gold-Set n={ev.get('n','?')} · Recall@1 = wie oft der 1. Treffer stimmt (höher = besser)",
+            f"Recall@1 = 1. Treffer stimmt · n={ev.get('n','?')}"), "GEDAEMPFT"))
     else:
         zeilen.append(c("keine Eval-Daten", "GEDAEMPFT"))
     abschnitt("QUALITÄT", zeilen, hint="gemessene Trefferquote")
@@ -494,12 +546,16 @@ def render():
     # ── Engine ──
     wts = cfg.get("weights") or {"bm25": 1, "vector": 1, "entity": 1}
     mxw = max(wts.values()) or 1
-    zeilen = []
+    zeilen = [caption("Wie stark drei Suchwege gewichtet werden — das System stellt das selbst ein.",
+                      "Gewicht der drei Suchwege (selbst-getunt).", "Suchwege-Gewicht.")]
     for sig, name in [("bm25", "WARNUNG"), ("vector", "ERFOLG"), ("entity", "INFO")]:
         v = wts.get(sig, 1.0)
         zeilen.append(metrik(sig, v / mxw, f"{v:.1f}x", name))
+    zeilen.append(c(laie("bm25 = Wortsuche · vector = Sinn-Suche · entity = über Verknüpfungen",
+                         "bm25=Wort · vector=Sinn · entity=Verknüpfung"), "GEDAEMPFT"))
     if vi:
-        zeilen.append(c(f"{vi['chunks']} Chunks · {vi['model']} {vi['dim']}d", "GEDAEMPFT"))
+        zeilen.append(c(laie(f"{vi['chunks']} Chunks (durchsuchbare Textstücke) · {vi['model']} {vi['dim']}d",
+                             f"{vi['chunks']} Chunks (Textstücke) · {vi['model']}"), "GEDAEMPFT"))
     abschnitt("ENGINE", zeilen, hint="Such-Gewichte · selbst-getunt")
 
     # ── Lernen ──
@@ -511,10 +567,12 @@ def render():
     for cf2 in confs:
         buckets[min(4, int(cf2 * 5))] += 1
     abschnitt("LERNEN", [
-        f"{badge(str(sack), 'GEFAHR')} {c('Sackgassen (aktiv-hemmend)', 'GEDAEMPFT')}",
-        f"{badge(str(miscal), 'WARNUNG')} {c('miskalibriert (Confidence trog)', 'GEDAEMPFT')}",
+        caption("Was es aus Korrekturen und Überraschungen dazugelernt hat.",
+                "Was es dazugelernt hat.", "Dazugelernt."),
+        f"{badge(str(sack), 'GEFAHR')} {c(laie('Sackgassen — bekannte Irrwege, die künftig gemieden werden', 'Sackgassen — gemiedene Irrwege', 'Sackgassen (Irrwege)'), 'GEDAEMPFT')}",
+        f"{badge(str(miscal), 'WARNUNG')} {c(laie('miskalibriert — Sicherheit hat getrogen', 'miskalibriert (Sicherheit trog)', 'miskalibriert'), 'GEDAEMPFT')}",
         metrik("Conf", avgc, f"{avgc*100:.0f}%", grad_name(avgc)),
-        f"{c('Verteilung', 'GEDAEMPFT')} {sparkbalken(buckets, 'INFO')} {c('0.0 → 1.0', 'GEDAEMPFT')}",
+        f"{c(laie('Conf = wie sicher sich das System ist · Verteilung', 'Sicherheit · Verteilung', 'Verteilung'), 'GEDAEMPFT')} {sparkbalken(buckets, 'INFO')} {c('0.0 → 1.0', 'GEDAEMPFT')}",
     ], hint="Lern-Signale")
 
     # ── Inbox ──
@@ -526,7 +584,9 @@ def render():
     nm = len(re.findall(r"(?m)^##.*MERGE", cptxt))
     na = len(re.findall(r"(?m)^##.*ADD", cptxt))
     abschnitt("INBOX", [
-        f"{badge(str(surp), 'LILA')} {c('Surprises', 'GEDAEMPFT')}    {badge(str(corr), 'WARNUNG')} {c('Korrekturen', 'GEDAEMPFT')}",
+        caption("Vorschläge, die auf deine Freigabe warten — nichts passiert automatisch.",
+                "Wartet auf deine Freigabe.", "Wartet auf Freigabe."),
+        f"{badge(str(surp), 'LILA')} {c(laie('Surprises (Überraschungen)', 'Surprises'), 'GEDAEMPFT')}    {badge(str(corr), 'WARNUNG')} {c('Korrekturen', 'GEDAEMPFT')}",
         f"{c('Verdichtung', 'GEDAEMPFT')}  {chip(f'{nd} DROP', 'GEFAHR')} {chip(f'{nm} MERGE', 'WARNUNG')} {chip(f'{na} ADD', 'ERFOLG')}",
         f"{badge(str(contra), 'AKZENT')} {c('Widerspruchs-Kandidat(en)', 'GEDAEMPFT')}",
     ], hint="wartet auf Review · nie auto")
@@ -535,7 +595,9 @@ def render():
     namebreite = INHALT - (9 if MODUS != "schmal" else 8)
     hi = sorted([x for x in alle if x[1] is not None], key=lambda x: -x[1])[:3]
     gross = sorted(alle, key=lambda x: -x[2])[:3]
-    zeilen = [c("nach Confidence", "ERFOLG")]
+    zeilen = [caption("Die wichtigsten Notizen — oben die verlässlichsten, dann die größten.",
+                      "Wichtigste Notizen.", "Top-Notizen."),
+              c(laie("nach Confidence (Verlässlichkeit)", "nach Verlässlichkeit"), "ERFOLG")]
     for f, cf2, b, l in hi:
         zeilen.append(f"  {c(f'{cf2*100:>3.0f}%', 'ERFOLG', bold=True)} {c(name_kuerzen(f, namebreite), 'TEXT')}")
     zeilen.append(c("nach Größe", "INFO"))

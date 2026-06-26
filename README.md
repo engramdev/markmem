@@ -22,9 +22,11 @@
 
 `memdash` ist das visuelle Aushängeschild: ein farbiges Terminal-Dashboard, das den kompletten Live-Zustand des Gedächtnisses zeigt — und sich wie eine CSS-Media-Query an die Fensterbreite anpasst.
 
+**Auch für Nicht-Techniker lesbar:** Oben steht eine Klartext-Zusammenfassung in Alltagssprache (z. B. *„Dein Gedächtnis: 21 Notizen gespeichert, zuletzt 4 neue Erkenntnisse gemerkt, findet Gesuchtes in 9 von 10 Fällen auf Anhieb."*), jedes Panel hat einen Untertitel, der erklärt wofür es da ist, und Fachbegriffe (Recall@1, Graph, Sackgassen, Chunks …) sind direkt an der Zahl kurz erklärt.
+
 <p align="center"><img src="assets/memdash-breit.svg" alt="memDash im breiten Modus (Mac-Querformat)" width="860"></p>
 
-<p align="center"><sub>Voller Breit-Modus (≥ 100 Spalten): Transformation, Korpus, Tiers gegen das Lade-Limit, die Recall@1-Treppe, die selbst-getunten Such-Gewichte, Lern-Schicht und Verdichtungs-Inbox.</sub></p>
+<p align="center"><sub>Voller Breit-Modus (≥ 100 Spalten): Klartext-Zusammenfassung, Transformation, Korpus, Tiers gegen das Lade-Limit, die Recall@1-Treppe, die selbst-getunten Such-Gewichte, Lern-Schicht und Verdichtungs-Inbox — jeweils mit Untertitel und Begriffs-Erklärungen in Alltagssprache.</sub></p>
 
 <table>
   <tr>
@@ -242,7 +244,9 @@ memdash            # Snapshot
 memdash --watch    # Live, refresht alle 5 s + sofort bei Resize
 ```
 
-Drei Eigenschaften machen es zum Aushängeschild:
+Vier Eigenschaften machen es zum Aushängeschild:
+
+- **Selbst-erklärend (auch für Laien).** Eine Klartext-Zusammenfassung in Alltagssprache ganz oben, ein Untertitel pro Panel (»wofür ist das?«) und kurze Erklärungen direkt an jedem Fachbegriff — man muss kein Wort wie *Recall@1* oder *Sackgasse* kennen, um zu verstehen, was das Dashboard sagt. Die Erklärungen kürzen sich in schmalen Fenstern automatisch.
 
 - **Responsiv wie CSS-Media-Queries.** Es misst die Terminalbreite bei jedem Tick und reagiert auf `SIGWINCH`. Drei Modi: **schmal** (< 56 Spalten, z. B. iPhone-Hochformat über SSH) ohne Boxen, **mittel** (56–99) kompakt, **breit** (≥ 100) mit vollen Rahmen. Keine Zeile wird je breiter als das Fenster (30–120 Spalten getestet).
 - **Unicode-korrekt.** Textbreiten werden über `wcwidth` gerechnet — Emojis und Block-Elemente belegen zwei Zellen, die Spalten fluchten überall.
