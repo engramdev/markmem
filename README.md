@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/banner.svg" alt="markmem" width="760"></p>
+<p align="center"><img src="assets/banner.svg" alt="markmem" width="700"></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-5FD787?style=flat-square" alt="License: MIT">
