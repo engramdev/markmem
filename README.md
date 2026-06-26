@@ -20,26 +20,24 @@
 
 ## memDash — auf einen Blick
 
-`memdash` ist das visuelle Aushängeschild: ein farbiges Terminal-Dashboard, das den kompletten Live-Zustand des Gedächtnisses zeigt — und sich wie eine CSS-Media-Query an die Fensterbreite anpasst.
+`memdash` ist das visuelle Aushängeschild: ein farbiges Terminal-Dashboard, das den kompletten Live-Zustand des Gedächtnisses zeigt — und sich wie eine CSS-Media-Query an die Fensterbreite anpasst. **Auch für Nicht-Techniker lesbar:** Oben steht eine Klartext-Zusammenfassung in Alltagssprache (z. B. *„Dein Gedächtnis: 21 Notizen gespeichert, zuletzt 4 neue Erkenntnisse gemerkt, findet Gesuchtes in 9 von 10 Fällen auf Anhieb."*), jedes Panel hat einen Untertitel, der erklärt wofür es da ist, und Fachbegriffe (Recall@1, Graph, Sackgassen, Chunks …) sind direkt an der Zahl kurz erklärt.
 
-**Auch für Nicht-Techniker lesbar:** Oben steht eine Klartext-Zusammenfassung in Alltagssprache (z. B. *„Dein Gedächtnis: 21 Notizen gespeichert, zuletzt 4 neue Erkenntnisse gemerkt, findet Gesuchtes in 9 von 10 Fällen auf Anhieb."*), jedes Panel hat einen Untertitel, der erklärt wofür es da ist, und Fachbegriffe (Recall@1, Graph, Sackgassen, Chunks …) sind direkt an der Zahl kurz erklärt.
+Ein und dasselbe Dashboard, zwei Fensterbreiten — links der Breit-Modus am Mac, rechts derselbe Stand im iPhone-Hochformat:
 
-<p align="center"><img src="assets/memdash-breit.svg" alt="memDash im breiten Modus (Mac-Querformat)" width="860"></p>
-
-<p align="center"><sub>Voller Breit-Modus (≥ 100 Spalten): Klartext-Zusammenfassung, Transformation, Korpus, Tiers gegen das Lade-Limit, die Recall@1-Treppe, die selbst-getunten Such-Gewichte, Lern-Schicht und Verdichtungs-Inbox — jeweils mit Untertitel und Begriffs-Erklärungen in Alltagssprache.</sub></p>
-
-<table>
+<table align="center">
   <tr>
-    <td align="center" width="40%">
-      <img src="assets/memdash-schmal.svg" alt="memDash im schmalen Modus (iPhone-Hochformat)" width="280">
+    <td align="center" valign="top" width="600">
+      <img src="assets/memdash-breit.svg" alt="memDash im breiten Modus (Mac-Querformat)" width="600"><br>
+      <sub><strong>Breit-Modus (Mac, &ge; 100 Spalten).</strong> Klartext-Zusammenfassung oben, dann alle Panels mit Untertiteln und Begriffs-Erklärungen: Korpus, Tiers gegen das Lade-Limit, die gemessene Recall@1-Treppe, die selbst-getunten Such-Gewichte, Lern-Schicht und Verdichtungs-Inbox.</sub>
     </td>
-    <td align="left" width="60%">
-      <strong>Dasselbe Dashboard im iPhone-Hochformat — responsiv.</strong><br><br>
-      Unter 56 Spalten (z.&nbsp;B. iPhone-Hochformat über SSH) fällt <code>memdash</code> in den schmalen Modus: ohne Boxen, gestapelt, jede Zeile bleibt im Fenster.<br><br>
-      Drei Modi (schmal / mittel / breit), Unicode-korrekte Spalten-Fluchtung über <code>wcwidth</code>, Farb-Degradation von Truecolor bis S/W.
+    <td align="center" valign="top" width="270">
+      <img src="assets/memdash-schmal.svg" alt="memDash im schmalen Modus (iPhone-Hochformat)" width="270"><br>
+      <sub><strong>Schmal-Modus (iPhone-Hochformat über SSH, &lt; 56 Spalten).</strong> Dieselben Daten, ohne Rahmen gestapelt, Erklärungen automatisch gekürzt — jede Zeile bleibt im Fenster.</sub>
     </td>
   </tr>
 </table>
+
+<p align="center"><sub>Drei Modi (schmal / mittel / breit), Unicode-korrekte Spalten-Fluchtung über <code>wcwidth</code>, Farb-Degradation von Truecolor bis S/W.</sub></p>
 
 <hr>
 
