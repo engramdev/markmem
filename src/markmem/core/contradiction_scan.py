@@ -24,11 +24,10 @@ import json
 import re
 import sqlite3
 import sys
-import urllib.request
-import urllib.error
 
 from markmem.core import vector_store as vs
-from markmem.config import MEMORY_DIR, OLLAMA_URL, LLM_MODEL
+from markmem.core import llm_client
+from markmem.config import MEMORY_DIR, LLM_MODEL
 from markmem import paths
 
 MEM = MEMORY_DIR
@@ -37,15 +36,8 @@ SIM_LOW, SIM_HIGH = 0.62, 0.96   # ähnlich genug (gleiches Thema), nicht near-d
 
 
 def llm(prompt: str, timeout: int = 90) -> str | None:
-    payload = json.dumps({"model": LLM_MODEL, "prompt": prompt, "stream": False,
-                          "options": {"temperature": 0.0}}).encode()
-    req = urllib.request.Request(f"{OLLAMA_URL}/api/generate", data=payload,
-                                 headers={"Content-Type": "application/json"}, method="POST")
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            return json.loads(r.read().decode()).get("response", "")
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError):
-        return None
+    """Observable, fail-open LLM call (shared client)."""
+    return llm_client.generate(prompt, timeout=timeout, temperature=0.0)
 
 
 def file_vectors():
