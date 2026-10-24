@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/banner.svg" alt="markmem" width="600"></p>
+<p align="center"><img src="assets/hero.png" alt="markmem — a self-learning AI memory on Markdown + git: a memory an auditor can read" width="100%"></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-5FD787?style=flat-square" alt="License: MIT">

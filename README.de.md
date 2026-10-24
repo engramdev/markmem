@@ -1,6 +1,6 @@
 <p align="right"><sub><a href="README.md">English (canonical)</a> · Deutsch</sub></p>
 
-<p align="center"><img src="assets/banner.svg" alt="markmem" width="600"></p>
+<p align="center"><img src="assets/hero.png" alt="markmem — ein selbst-lernendes KI-Gedächtnis auf Markdown + git: ein Gedächtnis, das ein Auditor lesen kann" width="100%"></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-5FD787?style=flat-square" alt="License: MIT">
