@@ -60,6 +60,14 @@ def _note_degraded(reason: str) -> None:
         log.info("vector leg unavailable (%s); retrieval uses BM25+entity only", reason)
 
 
+def available() -> bool:
+    """True if the vector leg can even run: numpy importable AND an index file exists.
+    Lets a caller tell 'vector leg down' apart from 'vector leg found nothing' (both
+    otherwise surface as an empty result). A live Ollama is NOT checked here -- an
+    embedding failure despite an index is caught via the stats() counters."""
+    return _np() is not None and DB_PATH.exists()
+
+
 # --------------------------------------------------------------- Ollama -------
 KEEP_ALIVE = "1h"  # bge-m3 nach Nutzung geladen halten → schnelles On-Demand-Retrieval
 

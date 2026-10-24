@@ -214,15 +214,28 @@ def entity_rank(target_ents: set[str], doc_ents: dict[str, set[str]],
 
 
 # ------------------------------------------------------------- VECTOR ---------
-def vector_rank(query_text: str, *, k: int, exclude: str | None) -> list[tuple[str, float]]:
+def vector_rank(query_text: str, *, k: int,
+                exclude: str | None) -> tuple[list[tuple[str, float]], str]:
     """Semantik-Bein (bge-m3 via vector_store, embedded SQLite + numpy-Cosine).
-    Liefert [(file, cos)] pro Datei. Fail-open: [] wenn Index/Ollama/numpy fehlt —
-    das System läuft dann mit BM25+Entity weiter (kein Crash, kein Hook-Timeout)."""
+    Liefert (rankings, leg_status) mit leg_status in {"ok", "unavailable"}.
+    Fail-open: bei fehlendem Index/Ollama/numpy -> ([], "unavailable"), das System
+    läuft mit BM25+Entity weiter (kein Crash, kein Hook-Timeout). "unavailable"
+    unterscheidet 'Bein tot' von 'Bein fand nichts' — beide lieferten sonst []."""
     try:
         from markmem.core import vector_store  # type: ignore
-        return vector_store.search(query_text, k=max(k * 3, 30), exclude=exclude)
+    except ImportError:
+        return [], "unavailable"
+    if not vector_store.available():
+        return [], "unavailable"
+    before = vector_store.stats()
+    try:
+        res = vector_store.search(query_text, k=max(k * 3, 30), exclude=exclude)
     except Exception:
-        return []
+        return [], "unavailable"
+    # Zählte das Embedding während DIESER Suche einen Fehler? -> Ollama tot trotz Index.
+    if any(vector_store.stats()[key] > before[key] for key in before):
+        return [], "unavailable"
+    return res, "ok"
 
 
 def rerank_files(query_text: str, files: list[str], k: int) -> list[tuple[str, float]]:
@@ -255,7 +268,8 @@ def rrf_fuse(rankings: list[list[tuple[str, float]]], k: int = 60,
 def retrieve(query_terms: Counter, query_text_lower: str, *, k: int,
              exclude: str | None, extra_rankings: list[list[tuple[str, float]]] | None = None,
              use_vectors: bool = True, rerank: bool = False, rerank_pool: int = 20,
-             config: dict | None = None) -> list[dict]:
+             config: dict | None = None,
+             with_status: bool = False) -> list[dict] | tuple[list[dict], dict]:
     tokens, _links, _slug = build_corpus()
     bm25 = BM25(tokens)
     entities = load_graph_entities()
@@ -265,7 +279,10 @@ def retrieve(query_terms: Counter, query_text_lower: str, *, k: int,
     bm_rank = bm25.rank(query_terms, exclude=exclude)
     target_ents = entity_mentions(query_text_lower, entities) if entities else set()
     ent_rank = entity_rank(target_ents, doc_ents, exclude) if entities else []
-    vec_rank = vector_rank(query_text_lower, k=k, exclude=exclude) if use_vectors else []
+    if use_vectors:
+        vec_rank, vec_leg = vector_rank(query_text_lower, k=k, exclude=exclude)
+    else:
+        vec_rank, vec_leg = [], "disabled"
 
     cfg = config if config is not None else load_config()
     w = cfg["weights"]
@@ -325,6 +342,8 @@ def retrieve(query_terms: Counter, query_text_lower: str, *, k: int,
             "rerank_score": round(rer_score.get(fname, 0.0), 3) if rer else None,
             "shared_entities": sorted((target_ents & doc_ents.get(fname, set()))) if entities else [],
         })
+    if with_status:
+        return results, {"degraded": vec_leg == "unavailable", "vector_leg": vec_leg}
     return results
 
 
@@ -376,13 +395,16 @@ def main() -> int:
 
     qterms = tokenize(text)
     use_vectors = not args.no_vectors
-    results = retrieve(qterms, text.lower(), k=args.k, exclude=exclude,
-                       extra_rankings=extra, use_vectors=use_vectors, rerank=args.rerank)
+    results, status = retrieve(qterms, text.lower(), k=args.k, exclude=exclude,
+                               extra_rankings=extra, use_vectors=use_vectors,
+                               rerank=args.rerank, with_status=True)
 
     if args.json:
         fusion = ["bm25", "entity"] + (["vector"] if use_vectors else []) + (["external-rrf"] if extra else []) + (["rerank"] if args.rerank else [])
         print(json.dumps({"query": exclude or args.query or "stdin-draft",
                           "fusion": fusion,
+                          "degraded": status["degraded"],
+                          "vector_leg": status["vector_leg"],
                           "results": results}, indent=2, ensure_ascii=False))
         return 0
 
@@ -402,6 +424,10 @@ def main() -> int:
         print(f"  {r['rrf']:.4f}  {bm:>5}  {en:>4}  {ve:>4}{rrc}  {r['file']}")
         if args.explain and r["shared_entities"]:
             print(f"           ↳ entities: {', '.join(r['shared_entities'][:5])}")
+    if status["degraded"]:
+        print("\n(degraded: vector leg unavailable -- BM25+entity only. "
+              "Start ollama / run markmem-index to enable semantic recall.)",
+              file=sys.stderr)
     return 0
 
 
