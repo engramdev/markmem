@@ -44,6 +44,12 @@ memory did, and can you read it afterwards?**
 
 <hr>
 
+## See it in 3D — orbital
+
+markmem is the memory engine; [orbital](https://github.com/engramdev/orbital) is the live 3D view of it. orbital renders your agent operation — sessions, agents, pipelines, tools, and markmem's memory — as a real-time particle graph, so you can watch which memories fire and when. Both are local-first and MIT. Part of the [engramdev](https://github.com/engramdev) suite.
+
+<hr>
+
 <a id="how-it-compares"></a>
 ## How it compares
 

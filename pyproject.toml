@@ -27,8 +27,8 @@ dev = ["pytest>=7", "ruff>=0.4"]
 all = ["markmem[vektor,rerank]"]
 
 [project.urls]
-Homepage = "https://github.com/markmem/markmem"
-Documentation = "https://github.com/markmem/markmem/tree/main/docs"
+Homepage = "https://github.com/engramdev/markmem"
+Documentation = "https://github.com/engramdev/markmem/tree/main/docs"
 
 [project.scripts]
 memdash = "markmem.core.dashboard:main"

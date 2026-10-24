@@ -45,6 +45,12 @@ Ein und dasselbe Dashboard, zwei Fensterbreiten — links der Breit-Modus am Mac
 
 <hr>
 
+## In 3D sehen — orbital
+
+markmem ist die Gedächtnis-Engine; [orbital](https://github.com/engramdev/orbital) ist die Live-3D-Sicht darauf. orbital rendert deinen Agenten-Betrieb — Sessions, Agenten, Pipelines, Tools und markmems Gedächtnis — als Echtzeit-Partikelgraph: du siehst, welche Erinnerungen wann feuern. Beide local-first und MIT. Teil der [engramdev](https://github.com/engramdev)-Suite.
+
+<hr>
+
 ## Was es ist — und was nicht
 
 **Es ist:**
