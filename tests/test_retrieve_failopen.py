@@ -114,3 +114,16 @@ def test_vector_store_available_returns_bool(totes_ollama):
     from markmem.core import vector_store
 
     assert isinstance(vector_store.available(), bool)
+
+
+def test_vector_rank_contract_returns_list_and_status(totes_ollama):
+    """Signatur-Vertrag, auf den ALLE Aufrufer (memory_retrieve, tune_retrieval)
+    bauen: vector_rank -> (list, status-str). Schützt vor stiller Regression wie
+    der, die den Tuner brach."""
+    from markmem.core import memory_retrieve as mr
+
+    out = mr.vector_rank("widget api", k=5, exclude=None)
+    assert isinstance(out, tuple) and len(out) == 2
+    rankings, leg = out
+    assert isinstance(rankings, list)
+    assert leg in {"ok", "unavailable"}

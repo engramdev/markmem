@@ -69,7 +69,7 @@ def main() -> int:
         bm = bm25.rank(qt)
         te = mr.entity_mentions(q.lower(), entities) if entities else set()
         er = mr.entity_rank(te, doc_ents, None) if entities else []
-        vr = mr.vector_rank(q.lower(), k=10, exclude=None)
+        vr, _leg = mr.vector_rank(q.lower(), k=10, exclude=None)  # (rankings, leg_status)
         per_q.append((gold, bm, er, vr))
         if i % 10 == 0:
             print(f"  [signale] {i}/{len(gs)}")
