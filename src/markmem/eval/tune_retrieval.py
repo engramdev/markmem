@@ -43,10 +43,26 @@ def metrics(ranks: list[int | None]) -> tuple[float, float]:
     return round(r1, 4), round(mrr, 4)
 
 
+def _split(n: int, frac: float) -> tuple[list[int], list[int]]:
+    """Deterministischer held-out-Split: jede stride-te Query wandert ins TEST-Set
+    (kein Random — reproduzierbar). frac<=0 oder n<6 -> kein Split (train==test, in-
+    sample/Legacy). Gibt (train_idx, test_idx); bei Split sind beide disjunkt."""
+    if frac <= 0 or n < 6:
+        idx = list(range(n))
+        return idx, idx
+    stride = max(2, round(1 / frac))
+    test = [i for i in range(n) if i % stride == 0]
+    train = [i for i in range(n) if i % stride != 0]
+    return train, test
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--goldset", default=str(GOLDSET))
     ap.add_argument("--write", action="store_true", help="beste Config schreiben (sonst nur Report)")
+    ap.add_argument("--holdout-frac", type=float, default=0.3,
+                    help="Anteil des Gold-Sets als ungesehenes TEST-Set (gegen Selbst-"
+                         "Kontamination). 0 = aus (in-sample, optimistisch). Default 0.3.")
     args = ap.parse_args()
 
     gs = json.loads(Path(args.goldset).read_text(encoding="utf-8"))
@@ -74,9 +90,9 @@ def main() -> int:
         if i % 10 == 0:
             print(f"  [signale] {i}/{len(gs)}")
 
-    def eval_cfg(wv, we, beta, pen) -> tuple[float, float]:
+    def eval_cfg(rows, wv, we, beta, pen) -> tuple[float, float]:
         ranks = []
-        for gold, bm, er, vr in per_q:
+        for gold, bm, er, vr in rows:
             labeled = [(bm, 1.0), (er, we), (vr, wv)]
             labeled = [(r, w) for r, w in labeled if r]
             fused = mr.rrf_fuse([r for r, _ in labeled], weights=[w for _, w in labeled])
@@ -93,26 +109,47 @@ def main() -> int:
             ranks.append((order.index(gold) + 1) if gold in order else None)
         return metrics(ranks)
 
-    base_r1, base_mrr = eval_cfg(1.0, 1.0, 0.0, 1.0)  # neutrale Baseline
-    print(f"\n[baseline] (alle Gewichte 1.0, keine Confidence) Recall@1={base_r1}  MRR={base_mrr}")
+    # Held-out gegen Selbst-Kontamination: NUR auf TRAIN tunen, die berichtete (und
+    # write-gatende) Zahl kommt vom ungesehenen TEST-Set.
+    train_idx, test_idx = _split(len(per_q), args.holdout_frac)
+    held_out = train_idx != test_idx
+    train_rows = [per_q[i] for i in train_idx]
+    test_rows = [per_q[i] for i in test_idx]
+    if held_out:
+        print(f"[split] n={len(per_q)} → train={len(train_rows)}, test={len(test_rows)} "
+              f"(held-out {args.holdout_frac:.0%}, deterministisch)")
+    else:
+        print(f"[split] KEIN held-out (n={len(per_q)} zu klein oder --holdout-frac 0) — "
+              f"Zahlen sind in-sample (optimistisch).")
 
-    best = (base_r1, base_mrr, 1.0, 1.0, 0.0, 1.0)
+    # Grid-Search: Zielmetrik auf TRAIN maximieren.
+    best = (*eval_cfg(train_rows, 1.0, 1.0, 0.0, 1.0), 1.0, 1.0, 0.0, 1.0)
     tested = 0
     for wv, we, beta, pen in product(GRID_VECTOR, GRID_ENTITY, GRID_BETA, GRID_PENALTY):
-        r1, mrr = eval_cfg(wv, we, beta, pen)
+        r1, mrr = eval_cfg(train_rows, wv, we, beta, pen)
         tested += 1
         if (r1, mrr) > (best[0], best[1]):
             best = (r1, mrr, wv, we, beta, pen)
-    r1, mrr, wv, we, beta, pen = best
-    print(f"[grid] {tested} Configs getestet.")
-    print(f"[best] Recall@1={r1} (Δ{r1-base_r1:+.4f})  MRR={mrr} (Δ{mrr-base_mrr:+.4f})")
-    print(f"       weights bm25=1.0 vector={wv} entity={we} · conf_beta={beta} · miscal_penalty={pen}")
+    _tr1, _tmrr, wv, we, beta, pen = best
+    print(f"[grid] {tested} Configs auf TRAIN getestet → beste: "
+          f"vector={wv} entity={we} conf_beta={beta} miscal_penalty={pen}")
+
+    # Ehrliche Bewertung auf dem UNGESEHENEN Test-Set — das ist die Zahl, die zählt.
+    tbase_r1, tbase_mrr = eval_cfg(test_rows, 1.0, 1.0, 0.0, 1.0)
+    test_r1, test_mrr = eval_cfg(test_rows, wv, we, beta, pen)
+    tag = "test " if held_out else "insmp"
+    print(f"[{tag}] baseline Recall@1={tbase_r1} MRR={tbase_mrr}")
+    print(f"[{tag}] gewählt  Recall@1={test_r1} (Δ{test_r1-tbase_r1:+.4f})  "
+          f"MRR={test_mrr} (Δ{test_mrr-tbase_mrr:+.4f})")
 
     cfg = {"weights": {"bm25": 1.0, "vector": wv, "entity": we},
            "conf_beta": beta, "miscal_penalty": pen,
-           "_tuned": {"goldset_n": len(gs), "recall@1": r1, "baseline_recall@1": base_r1}}
-    if (r1, mrr) <= (base_r1, base_mrr):
-        print("\n[skip] Keine Verbesserung über Baseline — Config NICHT geschrieben (neutral bleibt).")
+           "_tuned": {"goldset_n": len(gs), "held_out": held_out,
+                      "test_recall@1": test_r1, "test_baseline_recall@1": tbase_r1}}
+    # Write-Gate auf der HELD-OUT-Zahl: nur schreiben, wenn es dort generalisiert.
+    if (test_r1, test_mrr) <= (tbase_r1, tbase_mrr):
+        print("\n[skip] Keine Verbesserung auf dem Test-Set — Config NICHT geschrieben "
+              "(neutral bleibt; das Tuning generalisierte nicht).")
         return 0
     if args.write:
         OUT.write_text(json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8")
