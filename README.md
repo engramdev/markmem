@@ -63,7 +63,8 @@ of this table is *design philosophy*, not a capability contest.
 Where markmem is genuinely different: the **human-review gate**, **dead-end inhibition** (it learns
 from what *failed*, which almost every system throws away), and an **eval harness that overrules its
 own author** (see [Self-tuning](#self-tuning)). Where it is weaker: it is young, Claude-Code-coupled,
-and its benchmark numbers are not yet an independently reproducible public result (see
+and while a reproducible public benchmark now ships, it is small — the headline vector-lift numbers
+still come from a private corpus and are directional, not a leaderboard result (see
 [Retrieval](#retrieval)). We would rather say that than inflate it.
 
 <hr>
@@ -144,12 +145,38 @@ as defaults on the tested corpus (see the honest note under [Self-tuning](#self-
 
 ### Recall@1 — and exactly what it is
 
+Two tables, two jobs. The first anyone can recompute; the second is directional.
+
+**Reproducible public benchmark** — ships in the repo. A frozen gold set of 20 keyword-avoiding
+paraphrase queries over the synthetic [`examples/`](examples/) corpus, scored deterministically with
+95 % bootstrap confidence intervals. No LLM, no Ollama, byte-identical on every run:
+
+```bash
+export MARKMEM_MEMORY_DIR=examples/memory MARKMEM_GRAPH=examples/graph/graph.json
+markmem-eval --goldset examples/eval/goldset.json   # BM25 + entity, Ollama-free
+```
+
+| Metric | Value | 95 % CI |
+|---|---|---|
+| recall@1 | 0.900 | [0.750, 1.000] |
+| recall@3 | 0.950 | [0.850, 1.000] |
+| recall@5 | 1.000 | [1.000, 1.000] |
+| MRR | 0.938 | [0.838, 1.000] |
+
+> [!NOTE]
+> This proves the harness is **real and reproducible** — not that the vector leg dominates here. The demo
+> corpus is small and topic-distinct, so lexical retrieval already scores high and leaves the vector leg
+> little headroom. The vector/rerank *lift* shows on a larger, more homogeneous corpus — the directional
+> table below.
+
+**Directional** — private corpus, not independently reproducible.
+
 > [!WARNING]
-> **These numbers are directional, not an independent benchmark.** They were measured on a *private*
-> corpus with a small gold set (n ≈ 30–35, keyword-free paraphrase queries). They are **not** a
-> public, reproducible result on a standard dataset. A reproducible public benchmark (held-out split,
-> significance tests, published harness + seeds) is on the roadmap — until then, treat the table as
-> "the direction the design moves", not a leaderboard claim.
+> Measured on a *private* corpus with a small gold set (n ≈ 30–35, keyword-free paraphrase queries).
+> These are **not** a public result — read them as "the direction the design moves", not a leaderboard
+> claim. The self-tuner now reports on a **held-out split**
+> ([`markmem-tune --holdout-frac`](src/markmem/eval/tune_retrieval.py)), so tuning can no longer score
+> its own training data.
 
 | Configuration | Recall@1 | MRR |
 |---|---|---|

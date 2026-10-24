@@ -177,7 +177,33 @@ Die Listen werden per **gewichtetem Reciprocal Rank Fusion** zusammengeführt, o
 
 ### Recall@1-Treppe
 
-*Beispielmessung auf einem privaten Korpus (Gold-Set n ≈ 30–35, keyword-freie Paraphrase-Queries). Keine universellen Benchmarks — Zahlen illustrieren die Richtung, nicht ein Versprechen.*
+Zwei Tabellen, zwei Aufgaben. Die erste kann jede*r nachrechnen, die zweite ist richtungsweisend.
+
+**Reproduzierbarer öffentlicher Benchmark** — liegt im Repo. Ein eingefrorenes Gold-Set aus 20
+keyword-vermeidenden Paraphrase-Queries über den synthetischen [`examples/`](examples/)-Korpus,
+deterministisch mit 95-%-Bootstrap-Konfidenzintervallen. Kein LLM, kein Ollama, bei jedem Lauf bit-identisch:
+
+```bash
+export MARKMEM_MEMORY_DIR=examples/memory MARKMEM_GRAPH=examples/graph/graph.json
+markmem-eval --goldset examples/eval/goldset.json   # BM25 + Entity, Ollama-frei
+```
+
+| Metrik | Wert | 95-%-CI |
+|---|---|---|
+| recall@1 | 0.900 | [0.750, 1.000] |
+| recall@3 | 0.950 | [0.850, 1.000] |
+| recall@5 | 1.000 | [1.000, 1.000] |
+| MRR | 0.938 | [0.838, 1.000] |
+
+> [!NOTE]
+> Das belegt, dass der Harness **echt und reproduzierbar** ist — nicht, dass das Vektor-Bein hier
+> dominiert. Der Demo-Korpus ist klein und thematisch-distinkt, also punktet die lexikalische Suche
+> schon hoch und lässt dem Vektor-Bein wenig Spielraum. Der Vektor-/Rerank-*Zugewinn* zeigt sich auf
+> einem größeren, homogeneren Korpus — die Richtungs-Tabelle unten.
+
+**Richtungsweisend** — privater Korpus, nicht unabhängig reproduzierbar.
+
+*Beispielmessung auf einem privaten Korpus (Gold-Set n ≈ 30–35, keyword-freie Paraphrase-Queries). Keine universellen Benchmarks — Zahlen illustrieren die Richtung, nicht ein Versprechen. Der Selbst-Tuner berichtet jetzt auf einem **held-out-Split** ([`markmem-tune --holdout-frac`](src/markmem/eval/tune_retrieval.py)), damit das Tuning nicht seine eigenen Trainingsdaten bewertet.*
 
 <p align="left">
   <img src="https://img.shields.io/badge/Baseline_BM25%2BEntity-0.73-F0C35A?style=flat-square" alt="Baseline Recall@1 0.73">
@@ -192,7 +218,6 @@ Die Listen werden per **gewichtetem Reciprocal Rank Fusion** zusammengeführt, o
 | BM25 + Entity (Baseline) | 0.73 | 0.79 |
 | **+ Vektor-Bein (Default)** | **0.87** | 0.88 |
 | + Cross-Encoder (opt-in) | **0.93** | 0.93 |
-| Selbst-getunt (vector 2.5×) | 0.80 → **0.857** | 0.86 → 0.895 |
 
 Mehr: [docs/retrieval.md](docs/retrieval.md).
 
