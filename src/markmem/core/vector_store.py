@@ -30,9 +30,34 @@ import urllib.request
 
 from markmem.config import MEMORY_DIR, OLLAMA_URL, EMBED_MODEL, EMBED_DIM
 from markmem import paths
+from markmem.logging import get_logger
+
+log = get_logger(__name__)
 
 DB_PATH = paths.VECTOR_INDEX
 _OLLAMA_TIMEOUT = 45  # s — bge-m3 auf CPU; mit Chunk-Cap (≤3000 Z.) bleiben Aufrufe < ~15s
+
+# Observability: fail-open stays transparent to the caller, but loud to the operator.
+_STATS: dict[str, int] = {
+    "embed_http_error": 0,
+    "embed_conn_error": 0,
+    "embed_bad_response": 0,
+    "embed_count_mismatch": 0,
+}
+_warned: set[str] = set()
+
+
+def stats() -> dict[str, int]:
+    """Snapshot of the embed-failure counters (observable fail-open)."""
+    return dict(_STATS)
+
+
+def _note_degraded(reason: str) -> None:
+    """Log ONCE per process that the vector leg is unavailable. Not an error:
+    retrieval correctly falls back to BM25 + entity."""
+    if reason not in _warned:
+        _warned.add(reason)
+        log.info("vector leg unavailable (%s); retrieval uses BM25+entity only", reason)
 
 
 # --------------------------------------------------------------- Ollama -------
@@ -40,8 +65,15 @@ KEEP_ALIVE = "1h"  # bge-m3 nach Nutzung geladen halten → schnelles On-Demand-
 
 
 def _embed_call(texts: list[str], model: str, timeout: int) -> list[list[float]] | None:
-    """Ein einzelner /api/embed-Aufruf. None bei Fehler oder Längen-Mismatch."""
-    payload = json.dumps({"model": model, "input": texts, "keep_alive": KEEP_ALIVE}).encode("utf-8")
+    """One /api/embed call. Returns None on any failure so the caller stays fail-open --
+    but every failure is now logged (never with the input text) and counted.
+
+    `truncate` is set explicitly. True preserves Ollama's default (trim an over-long
+    input rather than error); markmem's chunk cap keeps inputs well under the model
+    window, so it should not trigger -- setting it documents the intent."""
+    payload = json.dumps(
+        {"model": model, "input": texts, "keep_alive": KEEP_ALIVE, "truncate": True}
+    ).encode("utf-8")
     req = urllib.request.Request(
         f"{OLLAMA_URL}/api/embed", data=payload,
         headers={"Content-Type": "application/json"}, method="POST",
@@ -49,12 +81,27 @@ def _embed_call(texts: list[str], model: str, timeout: int) -> list[list[float]]
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-        vecs = data.get("embeddings")
-        if not vecs or len(vecs) != len(texts):
-            return None
-        return vecs
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError):
+    except urllib.error.HTTPError as exc:  # subclass of URLError -- catch first
+        _STATS["embed_http_error"] += 1
+        log.warning("embed call failed: HTTP %s (%s); vector leg degrades to lexical",
+                    exc.code, "transient" if exc.code >= 500 else "permanent")
         return None
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        _STATS["embed_conn_error"] += 1
+        log.warning("embed call failed: %s (is ollama up at %s?); degrading to lexical",
+                    type(exc).__name__, OLLAMA_URL)
+        return None
+    except json.JSONDecodeError:
+        _STATS["embed_bad_response"] += 1
+        log.warning("embed call returned malformed JSON; degrading to lexical")
+        return None
+    vecs = data.get("embeddings")
+    if not vecs or len(vecs) != len(texts):
+        _STATS["embed_count_mismatch"] += 1
+        log.debug("embed returned %s vectors for %s inputs; retrying per-text",
+                  len(vecs) if vecs else 0, len(texts))
+        return None
+    return vecs
 
 
 def embed(texts: list[str], *, model: str = EMBED_MODEL,
@@ -155,17 +202,21 @@ def search(query: str, *, k: int = 12, exclude: str | None = None,
     timeout: kurz halten (z.B. 3s) für latenzkritische Pfade wie den SessionStart-Hook."""
     np = _np()
     if np is None:
+        _note_degraded("numpy not installed")
         return []
     con = connect()
     if con is None:
+        _note_degraded("no vector index built")
         return []
     try:
         rows = con.execute("SELECT file, embedding FROM chunks").fetchall()
-    except sqlite3.Error:
+    except sqlite3.Error as exc:
         con.close()
+        log.warning("vector index read failed (%s); degrading to lexical", type(exc).__name__)
         return []
     con.close()
     if not rows:
+        _note_degraded("vector index empty")
         return []
 
     qv = embed_one(query, timeout=timeout)
@@ -182,6 +233,8 @@ def search(query: str, *, k: int = 12, exclude: str | None = None,
     mat = np.frombuffer(b"".join(r[1] for r in rows), dtype="float32")
     dim = q.shape[0]
     if mat.size % dim != 0:
+        log.warning("vector index dim mismatch (stale index -- rebuild with markmem-index); "
+                    "skipping vector leg")
         return []  # Dim-Mismatch (z.B. alter Index) → fail-open
     mat = mat.reshape(-1, dim)
     files = [r[0] for r in rows]
