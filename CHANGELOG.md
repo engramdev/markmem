@@ -4,6 +4,18 @@ Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung nach [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unreleased]
+
+### Added
+- English README as the canonical version; the German edition moves to `README.de.md`.
+- `SECURITY.md`, `THREAT_MODEL.md`, `CODE_OF_CONDUCT.md`, and GitHub issue / pull-request templates.
+- Governance-first positioning ("an AI memory an auditor can read") and an honest, non-FUD comparison table.
+- English `CONTRIBUTING.md` (German kept as `CONTRIBUTING.de.md`).
+
+### Changed
+- Recall@1 figures now carry an explicit caveat: private corpus, n ≈ 30–35, not an independent public
+  benchmark. A reproducible public benchmark (held-out split, significance tests, published harness) is on the roadmap.
+
 ## [0.1.0] - 2026-06-26
 
 Erste öffentliche Version. Ein selbst-lernendes, selbst-tunendes KI-Gedächtnis auf Markdown + git.
@@ -32,4 +44,5 @@ Erste öffentliche Version. Ein selbst-lernendes, selbst-tunendes KI-Gedächtnis
 - **Confidence-Prior** gebaut, aber als Default **aus** — der Tuner maß `conf_beta = 0` (wirkungslos auf dem getesteten Korpus). Infrastruktur bleibt dormant.
 - **Reranker** als **opt-in**, nicht Default — +6,6 % Recall@1, aber 20–60 s CPU.
 
+[Unreleased]: https://github.com/markmem/markmem/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/markmem/markmem/releases/tag/v0.1.0
