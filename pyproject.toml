@@ -43,6 +43,7 @@ markmem-deadends = "markmem.learn.deadend_catalog:main"
 markmem-graph = "markmem.learn.graph_densify:main"
 markmem-audit = "markmem.ops.memory_audit:main"
 markmem-status = "markmem.ops.memory_status:main"
+markmem-contextscore = "markmem.ops.memory_context_score:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/markmem"]
