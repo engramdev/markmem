@@ -27,8 +27,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from markmem import config
-from markmem import paths
+from markmem import config, paths
 
 MEM = paths.MEMORY_DIR
 GRAPH = config.GRAPH

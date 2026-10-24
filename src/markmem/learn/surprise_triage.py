@@ -47,7 +47,7 @@ import json
 import math
 import re
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from datetime import datetime
 
 from markmem import paths
@@ -341,7 +341,7 @@ def print_table(blocks: list[dict]) -> None:
     elevated = sum(1 for b in blocks if b.get("sub") == "recurring-friction")
     if elevated:
         print(f"  (★ {elevated} elevated from noise via recurring-friction ≥{RECURRING_THRESHOLD})")
-    print(f"\n  Dry-run. Re-run with --apply to archive noise+dup and build the cluster digest.")
+    print("\n  Dry-run. Re-run with --apply to archive noise+dup and build the cluster digest.")
 
 
 def write_digest(clusters: list[dict]) -> None:
@@ -458,7 +458,7 @@ def main() -> int:
         print(f"SECRET_LEAK={n_secret}  (credential-like strings archived out of inbox)")
     print(f"CANDIDATES={len(candidates)} CLUSTERS={len(clusters)}")
     print(f"Digest written: {DIGEST}")
-    print(f"Next: run /memory-review to approve the clusters in one pass.")
+    print("Next: run /memory-review to approve the clusters in one pass.")
     return 0
 
 

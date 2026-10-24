@@ -39,11 +39,11 @@ STOPWORDS = {
     "make", "made", "take", "taken", "give", "given", "find", "found",
     # German
     "wenn", "dann", "aber", "auch", "nicht", "noch", "schon", "doch", "denn",
-    "vor", "nach", "über", "unter", "mit", "ohne", "bei", "ohne", "wie",
+    "vor", "nach", "über", "unter", "mit", "ohne", "bei", "wie",
     "weil", "damit", "dass", "ein", "eine", "einer", "eines", "der", "die",
-    "das", "den", "dem", "des", "und", "oder", "aber", "sein", "haben",
+    "das", "den", "dem", "des", "und", "oder", "sein", "haben",
     "werden", "können", "müssen", "sollen", "wollen", "diese", "dieser",
-    "dieses", "alle", "alles", "nichts", "etwas", "immer", "nie", "noch",
+    "dieses", "alle", "alles", "nichts", "etwas", "immer", "nie",
     # Markdown / structural
     "https", "http", "file", "line", "code", "text", "list", "item",
     "memory", "memories", "feedback", "project", "reference", "user",

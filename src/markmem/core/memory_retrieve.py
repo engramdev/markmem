@@ -36,8 +36,8 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from markmem.config import MEMORY_DIR, GRAPH
 from markmem import paths
+from markmem.config import GRAPH, MEMORY_DIR
 
 RETRIEVAL_CONFIG = paths.RETRIEVAL_CONFIG  # versioniert (verhaltensbestimmend)
 INDEX_CACHE = paths.INDEX_CACHE
@@ -92,7 +92,7 @@ def load_miscalibrated() -> set[str]:
 # Helfer aus dem bestehenden Linker wiederverwenden (Single Source of Truth für
 # Tokenisierung/Stopwords/Korpus). Fällt auf lokale Kopie zurück, falls Import bricht.
 try:
-    from markmem.core.find_related_memories import tokenize, build_corpus  # type: ignore
+    from markmem.core.find_related_memories import build_corpus, tokenize  # type: ignore
 except Exception:  # pragma: no cover — defensiv, sollte nie feuern
     TOKEN_RE = re.compile(r"[a-zA-Z][a-zA-Z0-9_-]{3,}")
     _STOP = {"this", "that", "with", "from", "nicht", "oder", "und", "der", "die", "das"}

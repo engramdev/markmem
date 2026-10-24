@@ -120,7 +120,7 @@ def main() -> int:
         print("  ✓ All sections already in trust-order. Nothing to suggest.")
     else:
         print(f"  → {suggestions} sections could be re-sorted manually.")
-        print(f"  → To preserve curation, no auto-apply. User edits MEMORY.md selectively.")
+        print("  → To preserve curation, no auto-apply. User edits MEMORY.md selectively.")
     return 0
 
 

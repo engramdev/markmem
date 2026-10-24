@@ -30,9 +30,9 @@ import sqlite3
 import sys
 import time
 
-from markmem.core import vector_store as vs
-from markmem.config import MEMORY_DIR
 from markmem import paths
+from markmem.config import MEMORY_DIR
+from markmem.core import vector_store as vs
 
 SKIP_FILES = paths.SKIP_FILES
 MAX_CHUNK_CHARS = 3000  # harte Obergrenze pro Chunk → jeder Embed-Aufruf < ~15s (CPU), nie Timeout.

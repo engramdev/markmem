@@ -21,9 +21,9 @@ import sys
 from itertools import product
 from pathlib import Path
 
-from markmem.core import memory_retrieve as mr
-from markmem.config import MEMORY_DIR
 from markmem import paths
+from markmem.config import MEMORY_DIR
+from markmem.core import memory_retrieve as mr
 
 MEM = MEMORY_DIR
 GOLDSET = paths.EVAL_GOLDSET

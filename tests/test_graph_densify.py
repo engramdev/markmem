@@ -16,8 +16,6 @@ from __future__ import annotations
 import importlib
 import sys
 
-import pytest
-
 
 def _reload_with_source(monkeypatch, source: str):
     """config + graph_densify so neu laden, dass ENTITY_SOURCE=source greift und

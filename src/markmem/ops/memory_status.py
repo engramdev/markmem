@@ -124,12 +124,12 @@ def main() -> int:
     print(f"  MEMORY.md: {md_lines}/195 lines (auto-loaded every session)")
     print()
     print(f"  Token-tax pool: {total_tokens:,} tokens total (loaded on-demand)")
-    print(f"  Top-5 heaviest files:")
+    print("  Top-5 heaviest files:")
     for tokens, name in top_tax:
         bar = "█" * int(tokens / 400)
         print(f"    {tokens:>5} {bar:<10} {name}")
     print()
-    print(f"  By type:")
+    print("  By type:")
     def safe_float(v):
         try:
             return float(v)
@@ -151,7 +151,7 @@ def main() -> int:
         label = t if t else "(no type)"
         print(f"    {label:>10}: {len(files):>3} files · avg confidence={avg_conf:.2f} · avg importance={avg_imp:.1f}")
     print()
-    print(f"  Health: ", end="")
+    print("  Health: ", end="")
     crit = sum(len(issues.get(k, [])) for k in ("frontmatter_invalid", "missing_index_targets", "duplicate_slugs", "index_oversize"))
     warn = sum(len(issues.get(k, [])) for k in ("oversize", "broken_wikilinks", "stale_unverified"))
     print(f"{'✓' if crit == 0 else '✗'} critical={crit} · ⚠ warnings={warn}")
@@ -160,25 +160,25 @@ def main() -> int:
     if issues.get("oversize"):
         print(f"    └─ oversize files: {len(issues['oversize'])} (consider /memory-review for splits)")
     print()
-    print(f"  Activity:")
+    print("  Activity:")
     print(f"    Sessions captured (7d): {recent_sessions}")
     print(f"    Outcome backprops (30d): {recent_outcomes}")
     print(f"    Quizzes run (30d): {recent_quizzes}")
     print()
-    print(f"  Inbox:")
+    print("  Inbox:")
     if inbox_counts:
         for name, n in inbox_counts.items():
             marker = "⚠" if n > 0 else "✓"
             print(f"    {marker} {name}: {n} items")
     else:
-        print(f"    ✓ empty")
+        print("    ✓ empty")
     print()
     print(f"  Git: {git_summary()}")
     print()
     if any(n > 0 for n in inbox_counts.values()) or issues.get("broken_wikilinks") or crit > 0:
-        print(f"  → Run /memory-review to triage")
+        print("  → Run /memory-review to triage")
     else:
-        print(f"  → System healthy. No action needed.")
+        print("  → System healthy. No action needed.")
     print()
     return 0
 

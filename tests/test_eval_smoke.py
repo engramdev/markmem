@@ -30,8 +30,8 @@ def ohne_ollama(monkeypatch):
 
 
 def test_eval_desc_smoke_laeuft_durch(ohne_ollama, monkeypatch):
-    from markmem.eval import eval_retrieval as ev
     from markmem import paths
+    from markmem.eval import eval_retrieval as ev
 
     # main() via argv treiben: kleiner Stichprobe, desc-Modus (kein LLM).
     monkeypatch.setattr(sys, "argv", ["eval_retrieval", "--mode", "desc", "--n", "8", "--k", "10"])
@@ -66,8 +66,8 @@ def test_eval_score_funktion_direkt(ohne_ollama):
 def test_eval_desc_basis_findet_etwas(ohne_ollama):
     """Über den Demo-Korpus sollte die desc-Query mindestens manche Gold-Karte
     in den Top-K finden (BM25 reicht) — beweist, dass der Harness echt misst."""
-    from markmem.eval import eval_retrieval as ev
     from markmem.core import memory_retrieve as mr
+    from markmem.eval import eval_retrieval as ev
 
     cards = ev.sample_cards(8)
     treffer = 0

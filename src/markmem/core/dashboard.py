@@ -31,12 +31,12 @@ from datetime import datetime
 from pathlib import Path
 
 try:
-    from wcwidth import wcswidth as _wcswidth   # bereits installiert (0.2.x)
+    from wcwidth import wcswidth as _wcswidth  # bereits installiert (0.2.x)
 except Exception:
     _wcswidth = None
 
-from markmem.config import MEMORY_DIR, GRAPH
 from markmem import paths
+from markmem.config import GRAPH, MEMORY_DIR
 
 MEM = MEMORY_DIR
 SKIP = paths.SKIP_FILES
@@ -348,7 +348,7 @@ def lade_karten():
         txt = safe(lambda p=p: p.read_text(encoding="utf-8"), "")
         kopf = txt[:600]
         t = (type_re.search(kopf).group(1) if type_re.search(kopf) else "?")
-        cf = safe(lambda: float(conf_re.search(kopf).group(1)), None)
+        cf = safe(lambda kopf=kopf: float(conf_re.search(kopf).group(1)), None)
         by_type.setdefault(t, []).append((p.name, cf, len(txt.encode()), txt.count("\n") + 1))
         alle.append((p.name, cf, len(txt.encode()), txt.count("\n") + 1))
     return by_type, alle

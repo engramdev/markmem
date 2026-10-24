@@ -78,23 +78,8 @@ def add_field_under_metadata(fm_body: str, field: str, value) -> str:
     """Add 'field: value' as nested under metadata. Preserves indentation."""
     # find metadata: line, insert after at indent 2
     lines = fm_body.split("\n")
-    out = []
-    inserted = False
-    for i, line in enumerate(lines):
-        out.append(line)
-        if not inserted and re.match(r"^metadata:\s*$", line):
-            # Insert after metadata: line, at end of metadata block
-            # Find where metadata block ends (next non-indented line or eof)
-            insert_at = len(out)
-            j = i + 1
-            while j < len(lines) and (lines[j].startswith("  ") or lines[j].strip() == ""):
-                j += 1
-            # Insert just before line j
-            new_line = f"  {field}: {value}"
-            # we keep building 'out' from lines linearly so we need different approach
-            # Instead: build all lines fresh
-            break
-    # Simpler approach: rebuild lines
+    # Rebuild the frontmatter line-by-line, inserting the new field at the end of the
+    # existing metadata: block (preserves indentation and any blank lines inside it).
     new_lines = []
     i = 0
     inserted = False
@@ -204,7 +189,7 @@ def main() -> int:
             if r["status"] in ("would-add", "added"):
                 hg = " [HARD-GATE]" if r.get("is_hg") else ""
                 print(f"  + {r['file']:60s}  imp={r['importance']}{hg}  add={','.join(r['added'])}")
-        print(f"\n(dry-run — re-run with --write to apply. Per-file backups created on write.)")
+        print("\n(dry-run — re-run with --write to apply. Per-file backups created on write.)")
     return 0
 
 

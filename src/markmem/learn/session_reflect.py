@@ -202,7 +202,7 @@ def session_summary_for_humans(s: dict, session_id: str, started_at: str | None,
         lines.append(f"- Citation rate: {rate:.0%}")
         lines.append(f"- Misses this session: {citation.get('miss_count', 0)}")
         if rate < 0.5:
-            lines.append(f"- ⚠ Below target (≥70%) — review inbox/citation_misses.md")
+            lines.append("- ⚠ Below target (≥70%) — review inbox/citation_misses.md")
 
     return "\n".join(lines)
 

@@ -25,10 +25,10 @@ import re
 import sys
 from datetime import datetime
 
+from markmem import paths
+from markmem.config import LLM_MODEL, MEMORY_DIR
 from markmem.core import find_related_memories as frm  # Nachbar-Retrieval (dedup-coverage) wiederverwenden
 from markmem.core import llm_client
-from markmem.config import MEMORY_DIR, LLM_MODEL
-from markmem import paths
 
 DIGEST = paths.INBOX / "triage_digest.md"
 OUT = paths.INBOX / "compaction_proposals.md"

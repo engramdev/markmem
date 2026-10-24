@@ -22,13 +22,12 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sqlite3
 import sys
 
-from markmem.core import vector_store as vs
-from markmem.core import llm_client
-from markmem.config import MEMORY_DIR, LLM_MODEL
 from markmem import paths
+from markmem.config import LLM_MODEL, MEMORY_DIR
+from markmem.core import llm_client
+from markmem.core import vector_store as vs
 
 MEM = MEMORY_DIR
 OUT = paths.INBOX / "contradictions_semantic.md"
@@ -75,7 +74,6 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--max-pairs", type=int, default=40, help="max LLM-geprüfte Kandidaten-Paare")
     args = ap.parse_args()
-    import numpy as np
 
     if llm("ping", timeout=120) is None:
         print(f"[error] LLM {LLM_MODEL} nicht erreichbar.", file=sys.stderr)

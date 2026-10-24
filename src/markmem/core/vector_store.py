@@ -28,8 +28,8 @@ import sys
 import urllib.error
 import urllib.request
 
-from markmem.config import MEMORY_DIR, OLLAMA_URL, EMBED_MODEL, EMBED_DIM
 from markmem import paths
+from markmem.config import EMBED_MODEL, OLLAMA_URL
 from markmem.logging import get_logger
 
 log = get_logger(__name__)

@@ -32,7 +32,7 @@ def _load():
     if _failed:
         raise RuntimeError("reranker zuvor fehlgeschlagen")
     if _model is None:
-        from transformers import AutoTokenizer, AutoModelForSequenceClassification
+        from transformers import AutoModelForSequenceClassification, AutoTokenizer
         _tok = AutoTokenizer.from_pretrained(MODEL_NAME)
         _model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
         _model.eval()
@@ -82,6 +82,7 @@ def rerank(query: str, files: list[str], *, k: int = 10,
 if __name__ == "__main__":
     import argparse
     import sys
+
     from markmem.core import vector_store
     ap = argparse.ArgumentParser(description="Vektor-Recall + Cross-Encoder-Rerank (Demo/Test)")
     ap.add_argument("--query", required=True)

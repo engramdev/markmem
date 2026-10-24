@@ -85,7 +85,7 @@ def test_output_pfad_folgt_registry_name_env_profil(monkeypatch):
             except Exception:
                 pass
 
-    from markmem import paths, config
+    from markmem import config, paths
     assert config.DEADEND_REGISTRY_NAME == "reference_sackgassen_registry.md"
     assert paths.DEADEND_REGISTRY.name == "reference_sackgassen_registry.md"
     # Profil-Glob */NIETE.md findet die Demo-DEADEND.md NICHT → "keine DEADEND" (rc 0, kein Register).

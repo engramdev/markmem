@@ -27,10 +27,10 @@ import re
 import sys
 from pathlib import Path
 
-from markmem.core import memory_retrieve as mr  # retrieve(), tokenize()
-from markmem.core import llm_client
-from markmem.config import MEMORY_DIR, LLM_MODEL
 from markmem import paths
+from markmem.config import LLM_MODEL, MEMORY_DIR
+from markmem.core import llm_client
+from markmem.core import memory_retrieve as mr  # retrieve(), tokenize()
 
 MEM = MEMORY_DIR
 OUT = paths.EVAL_JSON

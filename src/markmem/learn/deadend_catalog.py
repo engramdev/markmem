@@ -25,8 +25,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from markmem.config import DEADEND_DIR, DEADEND_GLOB
 from markmem import paths
+from markmem.config import DEADEND_DIR, DEADEND_GLOB
 
 OUT = paths.DEADEND_REGISTRY
 

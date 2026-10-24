@@ -53,6 +53,25 @@ include = ["src/markmem", "examples", "eval", "docs", "integrations", "scripts",
 line-length = 120
 target-version = "py311"
 
+[tool.ruff.lint]
+# Explicit, reproducible policy -- CI blocks on exactly this, so no ruff-version drift
+# silently changes what "clean" means. We gate on DEFECT-level rules, not cosmetics:
+#   F   pyflakes          (undefined names, unused imports/vars, broken f-strings)
+#   I   isort             (import order)
+#   E9  pycodestyle       (syntax errors)
+#   B   flake8-bugbear    (real bug smells: loop-var closures B023, duplicate values B033)
+# Deliberately NOT gated -- cosmetic or a disclosed design choice, not a defect:
+#   E501 line length, E741 single-char names -- pure style; repo-wide reflow/rename would be
+#        churn without correctness gain (line-length stays a soft target, see [tool.ruff]).
+#   BLE001 / S110 / S112 / E722 -- fail-open IS the design (see THREAT_MODEL.md): optional
+#        legs (Ollama, numpy, OTel, git) degrade to None/[]/skip rather than raise.
+#   EXE001 -- importable modules carry a conventional shebang without +x.
+select = ["F", "I", "E9", "B"]
+ignore = [
+    "B007",  # unused loop var -- cosmetic (would force _-prefix churn across many loops)
+    "B905",  # zip() strict= -- behaviour-neutral here; adding it repo-wide is drive-by churn
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["rerank: braucht torch/transformers (skip ohne)", "ollama: braucht laufenden Ollama"]
