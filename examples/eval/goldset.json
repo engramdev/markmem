@@ -1,0 +1,82 @@
+[
+  {
+    "query": "Wie verhindere ich, dass nach einem Schreibvorgang veraltete Einträge ausgeliefert werden?",
+    "gold": "feedback_caching_lessons.sample.md"
+  },
+  {
+    "query": "Warum scheiterte das Zurücksetzen auf die vorherige Version wegen inkompatibler Migrationen?",
+    "gold": "feedback_deploy_rollback.sample.md"
+  },
+  {
+    "query": "Warum sollte man unerwartete Programmfehler explizit behandeln statt sie stillschweigend zu verschlucken?",
+    "gold": "feedback_error_handling.sample.md"
+  },
+  {
+    "query": "Wie verfolge ich eine Anfrage durch alle Dienste, um einen Vorfall schneller zu diagnostizieren?",
+    "gold": "feedback_logging_correlation.sample.md"
+  },
+  {
+    "query": "Wie verhindere ich, dass alle Clients nach einem Ausfall gleichzeitig erneut anfragen?",
+    "gold": "feedback_retry_backoff.sample.md"
+  },
+  {
+    "query": "Wohin gehören vertrauliche Zugangsdaten und warum niemals in Code, Log oder Zwischenspeicher?",
+    "gold": "feedback_secrets_hygiene.sample.md"
+  },
+  {
+    "query": "Wie kombiniere ich viele schnelle Prüfungen mit wenigen durchgehenden Abläufen am besten?",
+    "gold": "feedback_testing_strategy.sample.md"
+  },
+  {
+    "query": "Wie halte ich externe Bibliotheken schlank, aktuell und auf Lizenz und Pflege geprüft?",
+    "gold": "project_dependency_hygiene.sample.md"
+  },
+  {
+    "query": "Aus welchen vier Stufen mit Gates und manueller Freigabe besteht unser Ausroll-Prozess?",
+    "gold": "project_deploy_pipeline.sample.md"
+  },
+  {
+    "query": "Wie werden ausgehende signierte Nachrichten zugestellt und nach erschöpften Versuchen in eine Warteschlange gelegt?",
+    "gold": "project_webhook_delivery.sample.md"
+  },
+  {
+    "query": "Welcher zentrale Dienst legt Objekte an, liest und aktualisiert sie hinter dem Gateway?",
+    "gold": "project_widget_api.sample.md"
+  },
+  {
+    "query": "Welche Konventionen gelten für Flags, Rückgabe-Codes und die Ausgabeform unserer Werkzeuge?",
+    "gold": "reference_cli_design.sample.md"
+  },
+  {
+    "query": "In welcher Reihenfolge haben Umgebungsvariable, Profil-Datei und eingebauter Standard Vorrang?",
+    "gold": "reference_config_schema.sample.md"
+  },
+  {
+    "query": "Welche drei Kennzahlen erfassen wir je Dienst: Durchsatz, Fehlerquote und Latenz?",
+    "gold": "reference_metrics_observability.sample.md"
+  },
+  {
+    "query": "Warum blättern unsere Listen-Endpunkte mit opaken Schlüsseln statt mit einem Zahlen-Offset?",
+    "gold": "reference_pagination_cursors.sample.md"
+  },
+  {
+    "query": "Wie begrenzt das Gateway die Anfragen pro Client und was passiert bei Überschreitung?",
+    "gold": "reference_rate_limit_policy.sample.md"
+  },
+  {
+    "query": "Wie kennzeichnen wir Breaking Changes, neue abwärtskompatible Felder und Fehlerbehebungen in drei Ziffern?",
+    "gold": "reference_versioning_scheme.sample.md"
+  },
+  {
+    "query": "Welche schreibenden Methoden invalidieren den Cache für Einzelobjekt und Liste?",
+    "gold": "reference_widget_api_endpoints.sample.md"
+  },
+  {
+    "query": "Was sollten neue Mitwirkende zuerst einrichten und welche Konventionen zuerst lesen?",
+    "gold": "user_onboarding_notes.sample.md"
+  },
+  {
+    "query": "Wie arbeiten wir zusammen: kurze Kommunikation, kleine Schritte und ein Branch vor Änderungen?",
+    "gold": "user_team_preferences.sample.md"
+  }
+]
