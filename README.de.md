@@ -158,9 +158,11 @@ Jedes Feature ist ein eigener Konsolen-Befehl (Entry-Point):
 | `markmem-eval` | **Eval-Harness:** Recall@1 / MRR gegen ein Paraphrase-Gold-Set |
 | `markmem-tune` | **Selbst-Tuner:** Grid-Search der Such-Gewichte + Prior gegen Recall@1 |
 | `markmem-deadends` | Erntet bewiesene Dead-Ends in ein semantisches Hemmungs-Register |
+| `markmem-corrections` | Lernt aus Dateien, die du nach dem Assistenten still geändert hast → Review-Kandidaten |
 | `markmem-graph` | Graph-Verdichtung (Entity-Knoten + Ko-Okkurrenz-Kanten) |
 | `markmem-audit` | Integrität: Hash-Ledger, Ghost-GC, Orphan-Cluster |
 | `markmem-status` | One-Screen-Pulse-Check (Token-Tax, Tiers, Confidence-Trends) |
+| `markmem-contextscore` | Nutzungsbasierter Grader: welche Memories Dead-Weight vs. Load-Bearing sind |
 
 <hr>
 

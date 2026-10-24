@@ -238,9 +238,11 @@ weights** accordingly (`markmem-eval` → `markmem-tune` → versioned config �
 | `markmem-eval` | eval harness: Recall@1 / MRR against a paraphrase gold set |
 | `markmem-tune` | self-tuner: grid-search of weights + prior against Recall@1 |
 | `markmem-deadends` | harvests proven dead-ends into a semantic inhibition register |
+| `markmem-corrections` | learns from files you silently edited after the assistant → review candidates |
 | `markmem-graph` | graph densification (entity nodes + co-occurrence edges) |
 | `markmem-audit` | integrity: hash ledger, ghost GC, orphan clusters |
 | `markmem-status` | one-screen pulse check (token tax, tiers, confidence trends) |
+| `markmem-contextscore` | usage-based grader: which memories are dead-weight vs. load-bearing |
 
 <hr>
 
