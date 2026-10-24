@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-5FD787?style=flat-square" alt="License: MIT">
   <img src="https://img.shields.io/badge/Python-3.11%2B-5AC8F5?style=flat-square&logo=python&logoColor=white" alt="Python 3.11+">
-  <img src="https://img.shields.io/badge/Tests-31_passing-5FD787?style=flat-square" alt="Tests: 31 passing">
+  <img src="https://img.shields.io/badge/Tests-60_passing-5FD787?style=flat-square" alt="Tests: 60 passing">
   <img src="https://img.shields.io/badge/Core-0_dependencies-5FD787?style=flat-square" alt="stdlib core">
   <img src="https://img.shields.io/badge/Retrieval-fail--open-8A93A0?style=flat-square" alt="fail-open">
   <img src="https://img.shields.io/badge/status-alpha-F0C35A?style=flat-square" alt="status: alpha">
